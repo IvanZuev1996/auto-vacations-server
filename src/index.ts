@@ -1,20 +1,23 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
+import { userRoute } from './routes/userRoute';
+import { authRoute } from './routes/authRoute';
 
+// получаем данные из .env файла (переменные окружения)
 dotenv.config();
-const app: Express = express();
 
+// создаем экземаляр express и порт на котором будет разворачиваться сервер
+const app: Express = express();
 const port = process.env.PORT || 8000;
 
-console.log(port);
-
+// дефолтный путь
 app.get('/', (req: Request, res: Response) => {
     res.send('Сервер работает! Это дефолтный путь');
 });
 
-app.get('/users', (req: Request, res: Response) => {
-    res.send('Users here');
-});
+// возврат всех имеющихся пользователей (пока что данные фейковые)
+app.use('/api/users', userRoute);
+app.use('/api/auth', authRoute);
 
 app.listen(port, () => {
     console.log(`[server]: Server is running at http://localhost:${port}`);

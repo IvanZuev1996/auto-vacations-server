@@ -9,9 +9,9 @@
         "baseUrl": ".",
         "strict": true,
         "moduleResolution": "node",
-        "paths": {
-            "@/*": ["./src/*"]
-        },
+        // "paths": {
+        //     "@/*": ["./src/*"]
+        // },
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true
     },
