@@ -1,4 +1,3 @@
-import { fakeUsersList } from '../data/db';
 import express from 'express';
 const router = express.Router();
 
