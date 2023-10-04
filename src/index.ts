@@ -6,7 +6,7 @@ import { authRoute } from './routes/authRoute';
 // получаем данные из .env файла (переменные окружения)
 dotenv.config();
 
-// создаем экземаляр express и порт на котором будет разворачиваться сервер
+// создаем экземпляр express и порт на котором будет разворачиваться сервер
 const app: Express = express();
 const port = process.env.PORT || 8000;
 
