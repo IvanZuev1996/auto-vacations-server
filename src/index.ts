@@ -5,9 +5,8 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import compression from 'compression';
 import cors from 'cors';
-import { userRoute } from './routes/userRoute';
-import { authRoute } from './routes/authRoute';
 import mongoose from 'mongoose';
+import router from './routes';
 
 dotenv.config();
 
@@ -23,13 +22,6 @@ app.use(
 app.use(compression());
 app.use(cookieParser());
 app.use(bodyParser.json());
-
-// routes
-app.get('/', (req: Request, res: Response) => {
-    res.send('Сервер работает! Это дефолтный путь');
-});
-app.use('/api/users', userRoute);
-app.use('/api/auth', authRoute);
 
 //server
 const server = http.createServer(app);
@@ -47,3 +39,5 @@ mongoose
     .then(() => console.log('Connected to MongoDB'))
     .catch((err) => console.log(err));
 mongoose.connection.on('error', (error: Error) => console.log(error));
+
+app.use('/api', router());

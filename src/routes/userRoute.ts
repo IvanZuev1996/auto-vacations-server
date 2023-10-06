@@ -1,33 +1,10 @@
-import express from 'express';
-const router = express.Router();
+// import express from 'express';
 
-import { User } from '../types/user';
+// import { getAllUsers, deleteUser, updateUser } from '../controllers/users';
+// import { isAuthenticated, isOwner } from '../middlewares';
 
-export const fakeUsersList: Record<string, User> = {
-    '1': {
-        firstname: 'John',
-        lastname: 'Lastname',
-        division: '1'
-    },
-    '2': {
-        firstname: 'Ivan',
-        lastname: 'Lastname',
-        division: '2'
-    },
-    '3': {
-        firstname: 'David',
-        lastname: 'Lastname',
-        division: '1'
-    }
-};
-
-router.get('/', (req, res) => {
-    const division = req.query.division; // это подразделение из запроса
-
-    const usersList = Object.values(fakeUsersList).filter(
-        (user) => user.division === division
-    );
-    res.status(200).json(usersList);
-});
-
-export { router as userRoute };
+// export default (router: express.Router) => {
+//     router.get('/users', isAuthenticated, getAllUsers);
+//     router.delete('/users/:id', isAuthenticated, isOwner, deleteUser);
+//     router.patch('/users/:id', isAuthenticated, isOwner, updateUser);
+// };

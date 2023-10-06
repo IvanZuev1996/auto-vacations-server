@@ -1,53 +1,66 @@
 import express, { Request, Response } from 'express';
 
-import { getUserByEmail, createUser, getUserByFullName } from '../models/User';
+import {
+    getUserByUsername,
+    createUser,
+    getUserByFullName
+} from '../models/User';
 import { authentication, random } from '../helpers/auth';
 
 import generator from 'generate-password';
+import { User, UserAuthData } from '../types/user';
 
-// export const login = async (req: Request, res: Response) => {
-//     try {
-//         const { email, password } = req.body;
+export const login = async (
+    req: Request<{}, {}, UserAuthData>,
+    res: Response
+) => {
+    try {
+        const { password, username } = req.body;
 
-//         if (!email || !password) {
-//             return res.sendStatus(400);
-//         }
+        if (!username || !password) {
+            return res.status(400).send({ message: 'Не введены данные!' });
+        }
 
-//         const user = await getUserByEmail(email).select(
-//             '+authentication.salt +authentication.password'
-//         );
+        const user = await getUserByUsername(username).select(
+            '+auth.salt +auth.password'
+        );
 
-//         if (!user) {
-//             return res.sendStatus(400);
-//         }
+        console.log(user);
 
-//         const expectedHash = authentication(user.auth.salt, password);
+        if (!user) {
+            return res.status(400).send({
+                status: 'noUser',
+                message: 'Неверный логин или пароль'
+            });
+        }
 
-//         if (user.auth.password != expectedHash) {
-//             return res.sendStatus(403);
-//         }
+        const expectedHashPassword = authentication(user.auth.salt, password);
 
-//         const salt = random();
-//         user.auth.sessionToken = authentication(
-//             salt,
-//             user._id.toString()
-//         );
+        if (user.auth.password != expectedHashPassword) {
+            return res.status(403).send({
+                status: 'failPassword',
+                message: 'Неверный логин или пароль'
+            });
+        }
 
-//         await user.save();
+        const salt = random();
+        user.auth.sessionToken = authentication(salt, user._id.toString());
 
-//         res.cookie('ANTONIO-AUTH', user.auth.sessionToken, {
-//             domain: 'localhost',
-//             path: '/'
-//         });
+        await user.save();
 
-//         return res.status(200).json(user).end();
-//     } catch (error) {
-//         console.log(error);
-//         return res.sendStatus(400);
-//     }
-// };
+        res.cookie('AUTO-VACATIONS-AUTH', user.auth.sessionToken, {
+            domain: 'localhost',
+            path: '/'
+        });
 
-export const register = async (req: Request, res: Response) => {
+        return res.status(200).json(user).end();
+    } catch (error) {
+        console.log(error);
+        return res.sendStatus(400);
+    }
+};
+
+export const register = async (req: Request<{}, {}, User>, res: Response) => {
     try {
         const {
             firstname,
@@ -68,12 +81,16 @@ export const register = async (req: Request, res: Response) => {
         const existingUser = await getUserByFullName(
             firstname,
             lastname,
-            patronymic,
-            division
+            division,
+            patronymic
         );
 
         if (existingUser) {
-            return res.sendStatus(400);
+            console.log(existingUser);
+            return res.status(400).send({
+                status: 1,
+                error: 'Такой пользователь уже существует!'
+            });
         }
 
         const username = generator.generate({
@@ -96,17 +113,21 @@ export const register = async (req: Request, res: Response) => {
             role,
             intersections,
             startWork,
-            balance: balance + 28,
+            daysOnVacations: 0,
+            balance: balance ? balance + 28 : balance,
             auth: {
                 username,
                 salt,
-                password: authentication(salt, password)
+                password: authentication(salt, password),
+                testPassword: password
             }
         });
 
         return res.status(200).json(user).end();
     } catch (error) {
-        console.log(error);
-        return res.sendStatus(400);
+        console.error('ERROR: ', error);
+        return res
+            .status(400)
+            .send({ status: 0, error: 'Something went wrong' });
     }
 };

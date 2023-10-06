@@ -1,9 +1,8 @@
 import express from 'express';
-const router = express.Router();
 
-// путь который отрабатывает по http://localhost:8000/api/auth/login
-router.get('/login', (req, res) => {
-    // тут надо сделать проверку логина и пароля и вернуть результат
-});
+import { register, login } from '../controllers/authentication';
 
-export { router as authRoute };
+export default (router: express.Router) => {
+    router.post('/auth/register', register);
+    router.post('/auth/login', login);
+};

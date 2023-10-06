@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
+import { Vacation } from '../types/vacation';
 
-const VacationSchema = new mongoose.Schema(
+const VacationSchema = new mongoose.Schema<Vacation>(
     {
         userId: { type: String, required: true }, // id пользователя
         start: { type: Date, required: true }, // дата начала отпуска
@@ -11,4 +12,7 @@ const VacationSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-export const VacationModel = mongoose.model('Vacation', VacationSchema);
+export const VacationModel = mongoose.model<Vacation>(
+    'Vacation',
+    VacationSchema
+);

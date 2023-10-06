@@ -1,43 +1,47 @@
 import mongoose from 'mongoose';
+import { User } from '../types/user';
 
-const UserSchema = new mongoose.Schema(
+export const UserSchema = new mongoose.Schema<User>(
     {
         firstname: { type: String, required: true }, // имя
         lastname: { type: String, required: true }, // фамилия
-        patronymic: { type: String, required: true }, // отчество
-        avatar: { type: String, required: true }, // аватарка
-        email: { type: String, required: true }, // почта
-        post: { type: String, required: true }, // должность
+        patronymic: { type: String }, // отчество
+        avatar: { type: String }, // аватарка
+        email: { type: String }, // почта
+        post: { type: String }, // должность
         role: { type: String, required: true }, // роль пользователя: Руководитель/Сотрудник
-        department: { type: Number, required: true }, // отдел
+        department: { type: Number }, // отдел
         division: { type: Number, required: true }, // подразделение
         intersections: { type: [String], required: true }, // пересечения
-        startWork: { type: Date, required: true }, // дата начала работы
+        startWork: { type: Date }, // дата начала работы
         vacations: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Vacation' }], // отпуска
         balance: { type: Number, required: true }, // баланс отпускных дней
-        daysOnVacations: { type: Number, required: true }, // кол-во дней проведенных в отпуске
-        visibleUsers: { type: String, required: true }, // доступные для просмотра пользователи
-        vacationStatus: { type: String, required: true }, // статус 'в отпуске' или 'работает'
+        daysOnVacations: { type: Number }, // кол-во дней проведенных в отпуске
+        visibleUsers: { type: [String] }, // доступные для просмотра пользователи
+        vacationStatus: { type: String }, // статус 'в отпуске' или 'работает'
         auth: {
             username: { type: String, required: true },
             password: { type: String, required: true, select: false },
             salt: { type: String, select: false },
-            sessionToken: { type: String, select: false }
+            sessionToken: { type: String, select: false },
+            testPassword: { type: String, select: false }
         }
     },
     { timestamps: true }
 );
 
-export const UserModel = mongoose.model('User', UserSchema);
+export const UserModel = mongoose.model<User>('User', UserSchema);
 
 export const getUsers = () => UserModel.find();
 export const getUserByEmail = (email: string) => UserModel.findOne({ email });
+export const getUserByUsername = (username: string) =>
+    UserModel.findOne({ 'auth.username': username });
 export const getUserByFullName = (
     firstname: string,
     lastname: string,
-    patronymic: string,
-    division: string
-) => UserModel.findOne({ firstname, lastname, patronymic, division });
+    division: number,
+    patronymic?: string
+) => UserModel.findOne({ firstname, lastname, division, patronymic });
 export const getUserBySessionToken = (sessionToken: string) =>
     UserModel.findOne({ 'authentication.sessionToken': sessionToken });
 export const getUserById = (id: string) => UserModel.findById(id);

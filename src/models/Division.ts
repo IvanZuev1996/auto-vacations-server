@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
+import { Division } from '../types/division';
 
-const DivisionSchema = new mongoose.Schema(
+const DivisionSchema = new mongoose.Schema<Division>(
     {
         divisionNumber: { type: Number, required: true }, // номер подразделения
         name: { type: String, required: true }, // название подразделения
@@ -11,4 +12,7 @@ const DivisionSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-export const DivisionModel = mongoose.model('Vacation', DivisionSchema);
+export const DivisionModel = mongoose.model<Division>(
+    'Vacation',
+    DivisionSchema
+);
