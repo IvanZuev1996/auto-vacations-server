@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { Division } from '../types/division';
+import { Division } from '../../types/division';
 
 const DivisionSchema = new mongoose.Schema<Division>(
     {

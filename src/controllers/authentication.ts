@@ -1,10 +1,10 @@
-import express, { Request, Response } from 'express';
+import { Request, Response } from 'express';
 
 import {
     getUserByUsername,
     createUser,
     getUserByFullName
-} from '../models/User';
+} from '../models/User/userActions';
 import { authentication, random } from '../helpers/auth';
 
 import generator from 'generate-password';
@@ -22,7 +22,7 @@ export const login = async (
         }
 
         const user = await getUserByUsername(username).select(
-            '+auth.salt +auth.password'
+            '+auth.salt +auth.password +auth.sessionToken'
         );
 
         console.log(user);
@@ -36,7 +36,7 @@ export const login = async (
 
         const expectedHashPassword = authentication(user.auth.salt, password);
 
-        if (user.auth.password != expectedHashPassword) {
+        if (user.auth.password !== expectedHashPassword) {
             return res.status(403).send({
                 status: 'failPassword',
                 message: 'Неверный логин или пароль'

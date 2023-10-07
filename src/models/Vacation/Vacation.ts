@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { Vacation } from '../types/vacation';
+import { Vacation } from '../../types/vacation';
 
 const VacationSchema = new mongoose.Schema<Vacation>(
     {

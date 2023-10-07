@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-const SECRET = 'AUTO-VACATIONS-REST-API';
+const SECRET = 'IVAN-ZUEV-REST-API';
 
 export const authentication = (username: string, password: string): string => {
     return crypto
