@@ -1,11 +1,12 @@
 import { Document, Schema } from 'mongoose';
 
-export type vacationStatus = 'pending' | 'rejected' | 'agreed';
+export type VacationStatus = 'pending' | 'rejected' | 'agreed';
+export type VacationTypes = 'standart';
 
 export interface Vacation extends Document {
     userId: string; // id пользователя
-    start: Schema.Types.Date; // дата начала отпуска
-    end: Schema.Types.Date; // дата конца отпуска
-    type: Schema.Types.Date; // тип отпуска
-    status: vacationStatus; // статус заявки
+    start: Date; // дата начала отпуска
+    end: Date; // дата конца отпуска
+    type: VacationTypes; // тип отпуска
+    status: VacationStatus; // статус заявки
 }
