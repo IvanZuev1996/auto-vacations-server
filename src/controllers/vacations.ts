@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import {
     deleteVacationById,
+    getVacationById,
     updateVacationById
 } from '../models/Vacation/VacationActions';
 import { Vacation, VacationStatus, VacationTypes } from '../types/vacation';
@@ -15,6 +16,17 @@ interface ReqQuery {
     status?: VacationStatus;
     userId?: string;
 }
+
+export const getOneVacationById = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    try {
+        const vacation = await getVacationById(id).populate('user');
+        return res.status(200).json(vacation);
+    } catch (error) {
+        console.log(error);
+        return res.sendStatus(400);
+    }
+};
 
 export const getAllVacations = async (
     req: Request<{}, {}, {}, ReqQuery>,
@@ -47,7 +59,7 @@ export const getAllVacations = async (
                     $gte: startDate,
                     $lte: endDate
                 }
-            });
+            }).populate('user');
         } else if (year && !month) {
             const startDate = new Date(`${year}-01-01`);
             const endDate = new Date(`${year}-12-31`);
@@ -62,9 +74,9 @@ export const getAllVacations = async (
                     $gte: startDate,
                     $lte: endDate
                 }
-            });
+            }).populate('user');
         } else {
-            vacations = await VacationModel.find(query);
+            vacations = await VacationModel.find(query).populate('user');
         }
 
         return res.status(200).json(vacations);

@@ -11,7 +11,7 @@ export const UserSchema = new mongoose.Schema<User>(
         post: { type: String }, // должность
         role: { type: String, required: true }, // роль пользователя: Руководитель/Сотрудник
         department: { type: Number }, // отдел
-        division: { type: Number, required: true }, // подразделение
+        division: { type: mongoose.Schema.Types.ObjectId, ref: 'Division' }, // подразделение
         intersections: { type: [String], required: true }, // пересечения
         startWork: { type: Date }, // дата начала работы
         balance: { type: Number, required: true }, // баланс отпускных дней

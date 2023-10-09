@@ -1,4 +1,5 @@
 import { Document, Schema } from 'mongoose';
+import { Division } from './division';
 
 interface AuthData {
     username: string;
@@ -21,7 +22,7 @@ export interface User extends Document {
     post?: string; // должность
     role: UserRole; // роль пользователя: Руководитель/Сотрудник
     department?: number; // отдел
-    division: number; // подразделение
+    division: Division; // подразделение
     intersections?: string[]; // пересечения
     startWork?: Schema.Types.Date; // дата начала работы
     vacations: [Schema.Types.ObjectId]; // отпуска

@@ -3,7 +3,7 @@ import { Vacation } from '../../types/vacation';
 
 const VacationSchema = new mongoose.Schema<Vacation>(
     {
-        userId: { type: String, required: true }, // id пользователя
+        user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // id пользователя
         start: { type: Date, required: true }, // дата начала отпуска
         end: { type: Date, required: true }, // дата конца отпуска
         type: { type: String, required: true }, // тип отпуска

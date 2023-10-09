@@ -13,6 +13,6 @@ const DivisionSchema = new mongoose.Schema<Division>(
 );
 
 export const DivisionModel = mongoose.model<Division>(
-    'Vacation',
+    'Division',
     DivisionSchema
 );

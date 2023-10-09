@@ -9,7 +9,7 @@ export const getVacationsByStatus = (status: VacationStatus) =>
     VacationModel.find({ status });
 export const getVacationsByType = (type: VacationTypes) =>
     VacationModel.find({ type });
-export const getUserById = (id: string) => VacationModel.findById(id);
+export const getVacationById = (id: string) => VacationModel.findById(id);
 
 export const createVacation = (values: Record<string, any>) =>
     new VacationModel(values).save().then((vacation) => vacation.toObject());
