@@ -79,9 +79,9 @@ export const getAllVacations = async (
             vacations = await VacationModel.find(query).populate('user');
         }
 
+        console.log('ВСЕ ОК');
         return res.status(200).json(vacations);
     } catch (error) {
-        console.log(error);
         return res.sendStatus(400);
     }
 };

@@ -74,6 +74,8 @@ export const register = async (req: Request<{}, {}, User>, res: Response) => {
             balance
         } = req.body;
 
+        console.log(req.body);
+
         if (!firstname || !lastname) {
             return res.sendStatus(400);
         }
