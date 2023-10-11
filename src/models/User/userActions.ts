@@ -24,7 +24,7 @@ export const getUserBySessionToken = (sessionToken: string) =>
 
 export const getUserById = (id: string) => UserModel.findById(id);
 
-export const createUser = (values: Record<string, any>) =>
+export const createUser = (values: Record<string, any>): Promise<User> =>
     new UserModel(values).save().then((user) => user.toObject());
 
 export const deleteUserById = (id: string) =>

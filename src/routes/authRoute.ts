@@ -6,3 +6,5 @@ export default (router: express.Router) => {
     router.post('/auth/register', register);
     router.post('/auth/login', login);
 };
+
+// http://localhost:8000/api/auth/register

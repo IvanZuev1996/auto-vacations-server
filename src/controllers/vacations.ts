@@ -28,6 +28,17 @@ export const getOneVacationById = async (req: Request, res: Response) => {
     }
 };
 
+export const getVacationListByUsers = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    try {
+        const vacation = await getVacationById(id).populate('user');
+        return res.status(200).json(vacation);
+    } catch (error) {
+        console.log(error);
+        return res.sendStatus(400);
+    }
+};
+
 export const getAllVacations = async (
     req: Request<{}, {}, {}, ReqQuery>,
     res: Response
@@ -79,7 +90,6 @@ export const getAllVacations = async (
             vacations = await VacationModel.find(query).populate('user');
         }
 
-        console.log('ВСЕ ОК');
         return res.status(200).json(vacations);
     } catch (error) {
         return res.sendStatus(400);
