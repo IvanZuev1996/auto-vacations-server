@@ -7,9 +7,7 @@ const VacationSchema = new mongoose.Schema<Vacation>(
         start: { type: Date, required: true }, // дата начала отпуска
         end: { type: Date, required: true }, // дата конца отпуска
         type: { type: String, required: true }, // тип отпуска
-        status: { type: String, required: true }, // статус заявки,
-        updatedAt: { type: Date, required: true },
-        createdAt: { type: Date, required: true }
+        status: { type: String, required: true } // статус заявки
     },
     { timestamps: true }
 );

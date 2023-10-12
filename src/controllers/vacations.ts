@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import {
     deleteVacationById,
     getVacationById,
+    getVacations,
     updateVacationById
 } from '../models/Vacation/VacationActions';
 import { Vacation, VacationStatus, VacationTypes } from '../types/vacation';
@@ -28,73 +29,92 @@ export const getOneVacationById = async (req: Request, res: Response) => {
     }
 };
 
-export const getVacationListByUsers = async (req: Request, res: Response) => {
-    const { id } = req.params;
+export const getAllVacations = async (req: Request, res: Response) => {
     try {
-        const vacation = await getVacationById(id).populate('user');
-        return res.status(200).json(vacation);
+        const vacations = await VacationModel.aggregate([
+            {
+                $group: {
+                    _id: '$user', // Группируем по полю user (userId)
+                    userVacations: { $push: '$$ROOT' } // Собираем отпуска пользователя в массив userVacations
+                }
+            },
+            {
+                $project: {
+                    userData: '$_id', // Создаем поле userId на основе _id
+                    userVacations: 1, // Оставляем поле userVacations
+                    _id: 0 // Убираем поле _id
+                }
+            }
+        ]);
+
+        await VacationModel.populate(vacations, {
+            path: 'userData',
+            model: 'User'
+        });
+
+        return res.status(200).json(vacations);
     } catch (error) {
         console.log(error);
         return res.sendStatus(400);
     }
 };
 
-export const getAllVacations = async (
-    req: Request<{}, {}, {}, ReqQuery>,
-    res: Response
-) => {
-    try {
-        const { month, year } = req.query;
-        const query: { [key: string]: any } = {
-            ...req.query,
-            year: undefined,
-            month: undefined
-        };
+// export const getAllVacations = async (
+//     req: Request<{}, {}, {}, ReqQuery>,
+//     res: Response
+// ) => {
+//     try {
+//         const { month, year } = req.query;
+//         const query: { [key: string]: any } = {
+//             ...req.query,
+//             year: undefined,
+//             month: undefined
+//         };
 
-        Object.keys(query).forEach((key) => !query[key] && delete query[key]);
+//         Object.keys(query).forEach((key) => !query[key] && delete query[key]);
 
-        let vacations;
+//         let vacations;
 
-        if (year && month) {
-            const startDate = new Date(`${year}-${month}-01`);
-            const days = dayjs(`${year}-${month}`).daysInMonth();
-            const endDate = new Date(`${year}-${month}-${days}`);
+//         if (year && month) {
+//             const startDate = new Date(`${year}-${month}-01`);
+//             const days = dayjs(`${year}-${month}`).daysInMonth();
+//             const endDate = new Date(`${year}-${month}-${days}`);
 
-            vacations = await VacationModel.find({
-                ...query,
-                start: {
-                    $gte: startDate,
-                    $lte: endDate
-                },
-                end: {
-                    $gte: startDate,
-                    $lte: endDate
-                }
-            }).populate('user');
-        } else if (year && !month) {
-            const startDate = new Date(`${year}-01-01`);
-            const endDate = new Date(`${year}-12-31`);
+//             vacations = await VacationModel.find({
+//                 ...query,
+//                 start: {
+//                     $gte: startDate,
+//                     $lte: endDate
+//                 },
+//                 end: {
+//                     $gte: startDate,
+//                     $lte: endDate
+//                 }
+//             }).populate('user');
+//         } else if (year && !month) {
+//             const startDate = new Date(`${year}-01-01`);
+//             const endDate = new Date(`${year}-12-31`);
 
-            vacations = await VacationModel.find({
-                ...query,
-                start: {
-                    $gte: startDate,
-                    $lte: endDate
-                },
-                end: {
-                    $gte: startDate,
-                    $lte: endDate
-                }
-            }).populate('user');
-        } else {
-            vacations = await VacationModel.find(query).populate('user');
-        }
+//             vacations = await VacationModel.find({
+//                 ...query,
+//                 start: {
+//                     $gte: startDate,
+//                     $lte: endDate
+//                 },
+//                 end: {
+//                     $gte: startDate,
+//                     $lte: endDate
+//                 }
+//             }).populate('user');
+//         } else {
+//             vacations = await VacationModel.find(query).populate('user');
+//         }
 
-        return res.status(200).json(vacations);
-    } catch (error) {
-        return res.sendStatus(400);
-    }
-};
+//         return res.status(200).json(vacations);
+//     } catch (error) {
+//         return res.sendStatus(400);
+//     }
+// };
 
 export const createVacation = async (
     req: Request<{}, {}, Vacation>,
