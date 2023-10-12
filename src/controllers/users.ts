@@ -5,7 +5,7 @@ import {
     getUserById,
     updateUserById
 } from '../models/User/userActions';
-import { User } from '../types/user';
+import { GetAllUsersParams, User } from '../types/user';
 import { UserModel } from '../models/User/User';
 
 interface UsersReqQuery {
@@ -24,14 +24,49 @@ export const getOneUserById = async (req: Request, res: Response) => {
 };
 
 export const getAllUsers = async (
-    req: Request<{}, {}, {}, UsersReqQuery>,
+    req: Request<{}, {}, {}, GetAllUsersParams>,
     res: Response
 ) => {
     try {
-        const query: { [key: string]: any } = req.query;
-        Object.keys(query).forEach((key) => !query[key] && delete query[key]);
+        const { search, sort } = req.query;
+        const searchTerms = search?.split(' ');
 
-        const users = await UserModel.find(query);
+        const searchQueries = searchTerms?.map((term) => ({
+            $or: [
+                { firstname: new RegExp(term, 'i') },
+                { lastname: new RegExp(term, 'i') },
+                { patronymic: new RegExp(term, 'i') }
+            ]
+        }));
+
+        let users;
+
+        if (search && sort !== 'all') {
+            users = await UserModel.find({
+                vacationStatus: sort,
+                $and: searchQueries
+            });
+
+            return res.status(200).json(users);
+        }
+
+        if (sort !== 'all' && !search) {
+            users = await UserModel.find({
+                vacationStatus: sort
+            });
+
+            return res.status(200).json(users);
+        }
+
+        if (search) {
+            users = await UserModel.find({
+                $and: searchQueries
+            });
+
+            return res.status(200).json(users);
+        }
+
+        users = await UserModel.find();
 
         return res.status(200).json(users);
     } catch (error) {

@@ -29,6 +29,13 @@ export interface User extends Document {
     balance: number; // баланс отпускных дней
     daysOnVacations: number; // кол-во дней проведенных в отпуске
     visibleUsers: string[]; // доступные для просмотра пользователи
-    vacationStatus: 'in vacation' | 'work'; // статус 'в отпуске' или 'работает'
+    vacationStatus: 'on vacation' | 'work'; // статус 'в отпуске' или 'работает'
     auth: AuthData;
+}
+
+export type SortType = 'all' | 'on vacation' | 'working';
+
+export interface GetAllUsersParams {
+    sort?: SortType;
+    search?: string;
 }
