@@ -19,7 +19,10 @@ export const getOneUserById = async (req: Request, res: Response) => {
         return res.status(200).json(user);
     } catch (error) {
         console.log(error);
-        return res.sendStatus(400);
+        return res.sendStatus(400).send({
+            status: 'FailgetOneUserById',
+            message: 'Ошибка при получении одного пользователя по ID'
+        });
     }
 };
 
@@ -71,7 +74,10 @@ export const getAllUsers = async (
         return res.status(200).json(users);
     } catch (error) {
         console.log(error);
-        return res.sendStatus(400);
+        return res.sendStatus(400).send({
+            status: 'FailgetAllUsers',
+            message: 'Ошибка при получении пользователей'
+        });
     }
 };
 
@@ -83,7 +89,10 @@ export const createUser = async (req: Request<{}, {}, User>, res: Response) => {
         return res.status(200).json(savedUser);
     } catch (error) {
         console.log(error);
-        return res.sendStatus(400);
+        return res.sendStatus(400).send({
+            status: 'FailCreateUser',
+            message: 'Ошибка при создании пользователя'
+        });
     }
 };
 
@@ -96,7 +105,10 @@ export const deleteUser = async (req: Request, res: Response) => {
         return res.json(deletedUser);
     } catch (error) {
         console.log(error);
-        return res.sendStatus(400);
+        return res.sendStatus(400).send({
+            status: 'FailDeleteUser',
+            message: 'Ошибка при удалении пользоваетеля'
+        });
     }
 };
 
@@ -112,6 +124,9 @@ export const updateUser = async (
         return res.status(200).json(user).end();
     } catch (error) {
         console.log(error);
-        return res.sendStatus(400);
+        return res.sendStatus(400).send({
+            status: 'FailupdateUser',
+            message: 'Ошибка при обновлении данных пользователя'
+        });
     }
 };
