@@ -21,7 +21,7 @@ export const getOneUserById = async (req: Request, res: Response) => {
         console.log(error);
         return res.sendStatus(400).send({
             status: 'FailgetOneUserById',
-            message: 'Ошибка при получении одного пользователя по ID'
+            message: 'Ошибка при получении пользователя по ID'
         });
     }
 };
