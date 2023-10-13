@@ -3,13 +3,29 @@ import { DivisionModel } from '../models/Division/Division';
 import {
     deleteDivisionById,
     getDivisions,
-    updateDivisionById
+    updateDivisionById,
+    getOneDivisionById
 } from '../models/Division/divisionActions';
 import { Division } from 'src/types/division';
 
+export const getDivisionById = async (
+    req: Request<{ id: string }>,
+    res: Response
+) => {
+    try {
+        const { id } = req.params;
+        const division = await getOneDivisionById(id);
+
+        return res.status(200).json(division);
+    } catch (error) {
+        console.log(error);
+        return res.sendStatus(400);
+    }
+};
+
 export const getAllDivisions = async (req: Request, res: Response) => {
     try {
-        const divisions = await getDivisions().populate('staff');
+        const divisions = await getDivisions();
 
         return res.status(200).json(divisions);
     } catch (error) {

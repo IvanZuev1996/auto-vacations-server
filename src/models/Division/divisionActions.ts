@@ -6,7 +6,7 @@ export const getDivisions = () => DivisionModel.find();
 export const getDivisionByNumber = (divisionNumber: string) =>
     DivisionModel.findOne({ divisionNumber });
 
-export const getDivisionById = (id: string) => DivisionModel.findById(id);
+export const getOneDivisionById = (id: string) => DivisionModel.findById(id);
 
 export const createDivision = (values: Record<string, any>) =>
     new DivisionModel(values).save().then((division) => division.toObject());

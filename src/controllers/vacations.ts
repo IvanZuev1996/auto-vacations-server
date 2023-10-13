@@ -44,6 +44,11 @@ export const getAllVacations = async (req: Request, res: Response) => {
                     userVacations: 1, // Оставляем поле userVacations
                     _id: 0 // Убираем поле _id
                 }
+            },
+            {
+                $sort: {
+                    'userData.lastname': 1 // Сортировка по фамилии (в алфавитном порядке)
+                }
             }
         ]);
 
@@ -51,6 +56,10 @@ export const getAllVacations = async (req: Request, res: Response) => {
             path: 'userData',
             model: 'User'
         });
+
+        vacations.sort((a, b) =>
+            a.userData.lastname.localeCompare(b.userData.lastname, 'ru')
+        );
 
         return res.status(200).json(vacations);
     } catch (error) {

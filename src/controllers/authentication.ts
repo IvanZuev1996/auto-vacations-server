@@ -116,7 +116,8 @@ export const register = async (req: Request<{}, {}, User>, res: Response) => {
             intersections,
             startWork,
             daysOnVacations: 0,
-            balance: balance ? balance + 28 : balance,
+            prevBalance: balance,
+            balance: 28,
             auth: {
                 username,
                 salt,
