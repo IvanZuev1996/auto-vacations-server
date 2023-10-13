@@ -18,7 +18,10 @@ export const login = async (
         const { password, username } = req.body;
 
         if (!username || !password) {
-            return res.status(400).send({ message: 'Не введены данные!' });
+            return res.status(400).send({ 
+                status: 'noInputData',
+                message: 'Не введены данные!'
+             });
         }
 
         const user = await getUserByUsername(username).select(
@@ -30,7 +33,7 @@ export const login = async (
         if (!user) {
             return res.status(400).send({
                 status: 'noUser',
-                message: 'Неверный логин или пароль'
+                message: 'Пользователь не найден'
             });
         }
 
@@ -39,7 +42,7 @@ export const login = async (
         if (user.auth.password !== expectedHashPassword) {
             return res.status(403).send({
                 status: 'failPassword',
-                message: 'Неверный логин или пароль'
+                message: 'Неверный пароль'
             });
         }
 
@@ -56,7 +59,10 @@ export const login = async (
         return res.status(200).json(user).end();
     } catch (error) {
         console.log(error);
-        return res.sendStatus(400);
+        return res.sendStatus(400).send({
+            status: 'FailLogin',
+            message: 'Ошибка при входе'
+        });
     }
 };
 
@@ -77,7 +83,10 @@ export const register = async (req: Request<{}, {}, User>, res: Response) => {
         console.log(req.body);
 
         if (!firstname || !lastname) {
-            return res.sendStatus(400);
+            return res.sendStatus(400).send({
+                status: 'NoFirstnameOrLastname',
+                error: 'Ошибка при вводе имени или фамилии'
+            });
         }
 
         const existingUser = await getUserByFullName(
@@ -90,7 +99,7 @@ export const register = async (req: Request<{}, {}, User>, res: Response) => {
         if (existingUser) {
             console.log(existingUser);
             return res.status(400).send({
-                status: 1,
+                status: 'userAlreadyExists',
                 error: 'Такой пользователь уже существует!'
             });
         }
@@ -131,6 +140,8 @@ export const register = async (req: Request<{}, {}, User>, res: Response) => {
         console.error('ERROR: ', error);
         return res
             .status(400)
-            .send({ status: 0, error: 'Something went wrong' });
+            .send({ 
+                status:'FailRegister', 
+                error: 'Ошибка при добавлении пользователя' });
     }
 };

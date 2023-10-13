@@ -25,7 +25,10 @@ export const getOneVacationById = async (req: Request, res: Response) => {
         return res.status(200).json(vacation);
     } catch (error) {
         console.log(error);
-        return res.sendStatus(400);
+        return res.sendStatus(400).send({
+            status: 'FailGetOneVacationById',
+            message: 'Ошибка при получении отпуска по ID'
+        });
     }
 };
 
@@ -64,7 +67,10 @@ export const getAllVacations = async (req: Request, res: Response) => {
         return res.status(200).json(vacations);
     } catch (error) {
         console.log(error);
-        return res.sendStatus(400);
+        return res.sendStatus(400).send({
+            status: 'FailGetAllVacations',
+            message: 'Ошибка при получении всех отпусков'
+        });
     }
 };
 
@@ -143,7 +149,10 @@ export const createVacation = async (
         return res.status(200).json(savedVacation);
     } catch (error) {
         console.log(error);
-        return res.sendStatus(400);
+        return res.sendStatus(400).send({
+            status: 'FailCreateVacation',
+            message: 'Ошибка при создании отпуска'
+        });
     }
 };
 
@@ -156,7 +165,10 @@ export const deleteVacation = async (req: Request, res: Response) => {
         return res.json(deletedVacation);
     } catch (error) {
         console.log(error);
-        return res.sendStatus(400);
+        return res.sendStatus(400).send({
+            status: 'FailDeleteVacation',
+            message: 'Ошибка при удалении отпуска'
+        });
     }
 };
 
@@ -172,6 +184,9 @@ export const updateVacation = async (
         return res.status(200).json(vacation).end();
     } catch (error) {
         console.log(error);
-        return res.sendStatus(400);
+        return res.sendStatus(400).send({
+            status: 'FailUpdateVacation',
+            message: 'Ошибка при обновлении отпуска'
+        });
     }
 };
