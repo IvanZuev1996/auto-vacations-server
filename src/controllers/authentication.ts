@@ -18,10 +18,10 @@ export const login = async (
         const { password, username } = req.body;
 
         if (!username || !password) {
-            return res.status(400).send({ 
+            return res.status(400).send({
                 status: 'noInputData',
                 message: 'Не введены данные!'
-             });
+            });
         }
 
         const user = await getUserByUsername(username).select(
@@ -138,10 +138,9 @@ export const register = async (req: Request<{}, {}, User>, res: Response) => {
         return res.status(200).json(user).end();
     } catch (error) {
         console.error('ERROR: ', error);
-        return res
-            .status(400)
-            .send({ 
-                status:'FailRegister', 
-                error: 'Ошибка при добавлении пользователя' });
+        return res.status(400).send({
+            status: 'FailRegister',
+            error: 'Ошибка при добавлении пользователя'
+        });
     }
 };
