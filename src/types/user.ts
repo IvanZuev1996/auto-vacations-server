@@ -39,4 +39,5 @@ export type SortType = 'all' | 'on vacation' | 'working';
 export interface GetAllUsersParams {
     sort?: SortType;
     search?: string;
+    division?: string;
 }

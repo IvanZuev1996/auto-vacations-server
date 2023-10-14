@@ -31,7 +31,7 @@ export const getAllUsers = async (
     res: Response
 ) => {
     try {
-        const { search, sort } = req.query;
+        const { search, sort, division } = req.query;
         const searchTerms = search?.split(' ');
 
         const searchQueries = searchTerms?.map((term) => ({
@@ -42,34 +42,21 @@ export const getAllUsers = async (
             ]
         }));
 
-        let users;
+        let query: any = {};
 
-        if (search && sort !== 'all') {
-            users = await UserModel.find({
-                vacationStatus: sort,
-                $and: searchQueries
-            });
-
-            return res.status(200).json(users);
+        if (sort !== 'all' && sort) {
+            query.vacationStatus = sort;
         }
 
-        if (sort !== 'all' && !search) {
-            users = await UserModel.find({
-                vacationStatus: sort
-            });
-
-            return res.status(200).json(users);
+        if (searchQueries) {
+            query.$and = searchQueries;
         }
 
-        if (search) {
-            users = await UserModel.find({
-                $and: searchQueries
-            });
-
-            return res.status(200).json(users);
+        if (division) {
+            query.division = division;
         }
 
-        users = await UserModel.find();
+        const users = await UserModel.find(query);
 
         return res.status(200).json(users);
     } catch (error) {

@@ -9,6 +9,7 @@ import { Vacation, VacationStatus, VacationTypes } from '../types/vacation';
 import { VacationModel } from '../models/Vacation/Vacation';
 
 import dayjs from 'dayjs';
+import { UserModel } from '../models/User/User';
 
 interface ReqQuery {
     month?: number;
@@ -32,39 +33,168 @@ export const getOneVacationById = async (req: Request, res: Response) => {
     }
 };
 
-export const getAllVacations = async (req: Request, res: Response) => {
+// export const getAllVacations = async (
+//     req: Request<{}, {}, {}, { division: string }>,
+//     res: Response
+// ) => {
+//     const { division } = req.query;
+
+//     try {
+//         let aggregationPipeline: any[] = [];
+
+//         if (division) {
+//             const userIds = await UserModel.find({ division }).distinct('_id');
+//             aggregationPipeline.push({
+//                 $match: {
+//                     user: { $in: userIds }
+//                 }
+//             });
+//         }
+
+//         aggregationPipeline.push(
+//             {
+//                 $group: {
+//                     _id: '$user', // Группируем по полю user (userId)
+//                     userVacations: { $push: '$$ROOT' } // Собираем отпуска пользователя в массив userVacations
+//                 }
+//             },
+//             {
+//                 $project: {
+//                     userData: '$_id', // Создаем поле userId на основе _id
+//                     userVacations: 1, // Оставляем поле userVacations
+//                     _id: 0 // Убираем поле _id
+//                 }
+//             },
+//             {
+//                 $sort: {
+//                     'userData.lastname': 1 // Сортировка по фамилии (в алфавитном порядке)
+//                 }
+//             }
+//         );
+
+//         const vacations = await VacationModel.aggregate(aggregationPipeline);
+
+//         await VacationModel.populate(vacations, {
+//             path: 'userData',
+//             model: 'User'
+//         });
+
+//         vacations.sort((a, b) =>
+//             a.userData.lastname.localeCompare(b.userData.lastname, 'ru')
+//         );
+
+//         return res.status(200).json(vacations);
+//     } catch (error) {
+//         console.log(error);
+//         return res.sendStatus(400).send({
+//             status: 'FailGetAllVacations',
+//             message: 'Ошибка при получении всех отпусков'
+//         });
+//     }
+// };
+
+export const getAllVacations = async (
+    req: Request<{}, {}, {}, { division: string }>,
+    res: Response
+) => {
+    const { division } = req.query;
+
     try {
-        const vacations = await VacationModel.aggregate([
+        let aggregationPipeline: any[] = [];
+
+        if (division) {
+            const userIds = await UserModel.find({ division }).distinct('_id');
+            aggregationPipeline.push({
+                $match: {
+                    user: { $in: userIds }
+                }
+            });
+        }
+
+        aggregationPipeline.push(
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'user',
+                    foreignField: '_id',
+                    as: 'userData'
+                }
+            },
+            {
+                $unwind: '$userData'
+            },
+            {
+                $sort: {
+                    'userData.division': 1, // Сортировка по division
+                    'userData.lastname': 1, // Сортировка по lastname
+                    user: 1 // Сортировка по пользователю (user)
+                }
+            },
             {
                 $group: {
-                    _id: '$user', // Группируем по полю user (userId)
-                    userVacations: { $push: '$$ROOT' } // Собираем отпуска пользователя в массив userVacations
+                    _id: {
+                        division: '$userData.division',
+                        user: '$user'
+                    },
+                    userVacations: {
+                        $push: {
+                            _id: '$_id',
+                            start: '$start',
+                            end: '$end',
+                            type: '$type',
+                            status: '$status',
+                            createdAt: '$createdAt',
+                            updatedAt: '$updatedAt',
+                            __v: '$__v'
+                        }
+                    },
+                    userData: { $first: '$userData' } // Выбираем первое значение userData (для каждого пользователя)
+                }
+            },
+            {
+                $group: {
+                    _id: '$_id.division',
+                    vacations: {
+                        $push: {
+                            userVacations: '$userVacations',
+                            userData: '$userData'
+                        }
+                    }
                 }
             },
             {
                 $project: {
-                    userData: '$_id', // Создаем поле userId на основе _id
-                    userVacations: 1, // Оставляем поле userVacations
-                    _id: 0 // Убираем поле _id
+                    vacations: 1,
+                    division: '$_id',
+                    _id: 0
                 }
             },
             {
                 $sort: {
-                    'userData.lastname': 1 // Сортировка по фамилии (в алфавитном порядке)
+                    division: 1 // Сортировка по division
                 }
             }
-        ]);
+        );
 
-        await VacationModel.populate(vacations, {
-            path: 'userData',
+        const allVacations = await VacationModel.aggregate(aggregationPipeline);
+
+        await VacationModel.populate(allVacations, {
+            path: 'vacations.userData',
             model: 'User'
         });
 
-        vacations.sort((a, b) =>
-            a.userData.lastname.localeCompare(b.userData.lastname, 'ru')
-        );
+        await VacationModel.populate(allVacations, {
+            path: 'division',
+            model: 'Division'
+        });
 
-        return res.status(200).json(vacations);
+        allVacations.forEach((division: any) => {
+            division.vacations.sort((a: any, b: any) =>
+                a.userData.lastname.localeCompare(b.userData.lastname, 'ru')
+            );
+        });
+
+        return res.status(200).json(allVacations);
     } catch (error) {
         console.log(error);
         return res.sendStatus(400).send({
@@ -73,63 +203,6 @@ export const getAllVacations = async (req: Request, res: Response) => {
         });
     }
 };
-
-// export const getAllVacations = async (
-//     req: Request<{}, {}, {}, ReqQuery>,
-//     res: Response
-// ) => {
-//     try {
-//         const { month, year } = req.query;
-//         const query: { [key: string]: any } = {
-//             ...req.query,
-//             year: undefined,
-//             month: undefined
-//         };
-
-//         Object.keys(query).forEach((key) => !query[key] && delete query[key]);
-
-//         let vacations;
-
-//         if (year && month) {
-//             const startDate = new Date(`${year}-${month}-01`);
-//             const days = dayjs(`${year}-${month}`).daysInMonth();
-//             const endDate = new Date(`${year}-${month}-${days}`);
-
-//             vacations = await VacationModel.find({
-//                 ...query,
-//                 start: {
-//                     $gte: startDate,
-//                     $lte: endDate
-//                 },
-//                 end: {
-//                     $gte: startDate,
-//                     $lte: endDate
-//                 }
-//             }).populate('user');
-//         } else if (year && !month) {
-//             const startDate = new Date(`${year}-01-01`);
-//             const endDate = new Date(`${year}-12-31`);
-
-//             vacations = await VacationModel.find({
-//                 ...query,
-//                 start: {
-//                     $gte: startDate,
-//                     $lte: endDate
-//                 },
-//                 end: {
-//                     $gte: startDate,
-//                     $lte: endDate
-//                 }
-//             }).populate('user');
-//         } else {
-//             vacations = await VacationModel.find(query).populate('user');
-//         }
-
-//         return res.status(200).json(vacations);
-//     } catch (error) {
-//         return res.sendStatus(400);
-//     }
-// };
 
 export const createVacation = async (
     req: Request<{}, {}, Vacation>,
