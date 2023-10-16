@@ -22,8 +22,11 @@ app.use(
     })
 );
 
-//server
 const server = http.createServer(app);
+
+app.get('/', (request, response) => {
+    response.send('Its work');
+});
 
 server.listen(port, () => {
     console.log(`[server]: Server is running at http://localhost:${port}`);

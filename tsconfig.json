@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "outDir": "./dist",
+        "outDir": "./dist/",
         "noImplicitAny": true,
         "target": "ESNext",
         "module": "ESNext",
@@ -18,7 +18,8 @@
     "ts-node": {
         "compilerOptions": {
             "module": "CommonJS"
-        }
+        },
+        "esm": true
     },
-    "exclude": ["node_modules", "**/node_modules/*"]
+    "exclude": ["node_modules", "**/node_modules/*", "./dist/**/*"]
 }
