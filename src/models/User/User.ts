@@ -9,7 +9,7 @@ export const UserSchema = new mongoose.Schema<User>(
         avatar: { type: String }, // аватарка
         email: { type: String }, // почта
         post: { type: String }, // должность
-        role: { type: String, required: true }, // роль пользователя: Руководитель/Сотрудник
+        role: { type: [String], required: true }, // роль пользователя: Руководитель/Сотрудник
         department: { type: Number }, // отдел
         division: { type: mongoose.Schema.Types.ObjectId, ref: 'Division' }, // подразделение
         intersections: { type: [String], required: true }, // пересечения

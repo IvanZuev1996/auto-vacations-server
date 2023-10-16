@@ -11,7 +11,7 @@ interface AuthData {
 
 export type UserAuthData = Omit<AuthData, 'salt' | 'sessionToken'>;
 
-export type UserRole = 'director' | 'employee';
+export type UserRole = 'USER' | 'ADMIN';
 
 export interface User extends Document {
     firstname: string; // имя
@@ -20,7 +20,7 @@ export interface User extends Document {
     avatar?: string; // аватарка
     email?: string; // почта
     post?: string; // должность
-    role: UserRole; // роль пользователя: Руководитель/Сотрудник
+    role: UserRole[]; // роль пользователя: Руководитель/Сотрудник
     department?: number; // отдел
     division: Division; // подразделение
     intersections?: string[]; // пересечения
