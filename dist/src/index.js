@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser';
 import compression from 'compression';
 import cors from 'cors';
 import mongoose from 'mongoose';
-import router from './routes';
+import router from './routes/index';
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 8000;
