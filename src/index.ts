@@ -43,3 +43,5 @@ mongoose
 mongoose.connection.on('error', (error: Error) => console.log(error));
 
 app.use('/api', router());
+
+export default app;
