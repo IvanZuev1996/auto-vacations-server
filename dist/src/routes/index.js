@@ -1,0 +1,13 @@
+import express from 'express';
+import authentication from './authRoute';
+import vacations from './vacationRoute';
+import users from './userRoute';
+import divisions from './divisionRoute';
+const router = express.Router();
+export default () => {
+    authentication(router);
+    vacations(router);
+    users(router);
+    divisions(router);
+    return router;
+};
