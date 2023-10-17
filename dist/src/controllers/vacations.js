@@ -71,7 +71,7 @@ export const getAllVacations = async (req, res) => {
     const { division } = req.query;
     try {
         let aggregationPipeline = [];
-        if (division) {
+        if (division !== 'all') {
             const userIds = await UserModel.find({ division }).distinct('_id');
             aggregationPipeline.push({
                 $match: {

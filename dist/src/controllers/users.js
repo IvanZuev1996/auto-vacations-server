@@ -32,7 +32,7 @@ export const getAllUsers = async (req, res) => {
         if (searchQueries) {
             query.$and = searchQueries;
         }
-        if (division) {
+        if (division !== 'all' && division) {
             query.division = division;
         }
         const users = await UserModel.find(query);

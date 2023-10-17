@@ -25,7 +25,11 @@ export const getAllDivisions = async (req, res) => {
     }
 };
 export const createDivision = async (req, res) => {
-    const newDivision = new DivisionModel(req.body);
+    const newDivision = new DivisionModel({
+        ...req.body,
+        agreedApplications: 0,
+        submitApplications: 0
+    });
     try {
         const savedDivision = await newDivision.save();
         return res.status(200).json(savedDivision);

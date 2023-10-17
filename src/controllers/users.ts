@@ -52,7 +52,7 @@ export const getAllUsers = async (
             query.$and = searchQueries;
         }
 
-        if (division) {
+        if (division !== 'all' && division) {
             query.division = division;
         }
 

@@ -102,7 +102,7 @@ export const getAllVacations = async (
     try {
         let aggregationPipeline: any[] = [];
 
-        if (division) {
+        if (division !== 'all') {
             const userIds = await UserModel.find({ division }).distinct('_id');
             aggregationPipeline.push({
                 $match: {
