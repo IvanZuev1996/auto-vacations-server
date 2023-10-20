@@ -58,6 +58,19 @@ export const getAllUsers = async (
 
         const users = await UserModel.find(query);
 
+        users.sort((a: User, b: User) => {
+            const lastNameA = a.lastname.toLowerCase();
+            const lastNameB = b.lastname.toLowerCase();
+
+            if (lastNameA < lastNameB) {
+                return -1;
+            } else if (lastNameA > lastNameB) {
+                return 1;
+            }
+
+            return 0;
+        });
+
         return res.status(200).json(users);
     } catch (error) {
         console.log(error);
