@@ -33,66 +33,6 @@ export const getOneVacationById = async (req: Request, res: Response) => {
     }
 };
 
-// export const getAllVacations = async (
-//     req: Request<{}, {}, {}, { division: string }>,
-//     res: Response
-// ) => {
-//     const { division } = req.query;
-
-//     try {
-//         let aggregationPipeline: any[] = [];
-
-//         if (division) {
-//             const userIds = await UserModel.find({ division }).distinct('_id');
-//             aggregationPipeline.push({
-//                 $match: {
-//                     user: { $in: userIds }
-//                 }
-//             });
-//         }
-
-//         aggregationPipeline.push(
-//             {
-//                 $group: {
-//                     _id: '$user', // Группируем по полю user (userId)
-//                     userVacations: { $push: '$$ROOT' } // Собираем отпуска пользователя в массив userVacations
-//                 }
-//             },
-//             {
-//                 $project: {
-//                     userData: '$_id', // Создаем поле userId на основе _id
-//                     userVacations: 1, // Оставляем поле userVacations
-//                     _id: 0 // Убираем поле _id
-//                 }
-//             },
-//             {
-//                 $sort: {
-//                     'userData.lastname': 1 // Сортировка по фамилии (в алфавитном порядке)
-//                 }
-//             }
-//         );
-
-//         const vacations = await VacationModel.aggregate(aggregationPipeline);
-
-//         await VacationModel.populate(vacations, {
-//             path: 'userData',
-//             model: 'User'
-//         });
-
-//         vacations.sort((a, b) =>
-//             a.userData.lastname.localeCompare(b.userData.lastname, 'ru')
-//         );
-
-//         return res.status(200).json(vacations);
-//     } catch (error) {
-//         console.log(error);
-//         return res.sendStatus(400).send({
-//             status: 'FailGetAllVacations',
-//             message: 'Ошибка при получении всех отпусков'
-//         });
-//     }
-// };
-
 export const getAllVacations = async (
     req: Request<{}, {}, {}, { division: string }>,
     res: Response
@@ -101,6 +41,12 @@ export const getAllVacations = async (
 
     try {
         let aggregationPipeline: any[] = [];
+
+        // aggregationPipeline.push({
+        //     $match: {
+        //         status: 'agreed'
+        //     }
+        // });
 
         if (division !== 'all') {
             const userIds = await UserModel.find({ division }).distinct('_id');
@@ -214,7 +160,8 @@ export const createVacation = async (
     const newVacation = new VacationModel({
         ...req.body,
         start: startDate,
-        end: endDate
+        end: endDate,
+        status: 'pending'
     });
 
     try {
