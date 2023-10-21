@@ -13,6 +13,6 @@ export default (router: express.Router) => {
     router.get('/users', getAllUsers);
     router.post('/users', createUser);
     router.get('/users/:id', getOneUserById);
-    router.delete('/users/:id', isAuthenticated, isOwner, deleteUser);
+    router.delete('/users/:id', deleteUser);
     router.patch('/users/:id', updateUser);
 };
