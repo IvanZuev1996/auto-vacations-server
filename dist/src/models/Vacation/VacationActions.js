@@ -1,5 +1,6 @@
 import { VacationModel } from './Vacation';
 export const getVacations = () => VacationModel.find();
+export const getUserVacationsById = (id) => VacationModel.find({ user: id });
 export const getVacationsByUserId = (userId) => VacationModel.find({ userId });
 export const getVacationsByStatus = (status) => VacationModel.find({ status });
 export const getVacationsByType = (type) => VacationModel.find({ type });

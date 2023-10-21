@@ -1,4 +1,4 @@
-import { deleteVacationById, getVacationById, updateVacationById } from '../models/Vacation/VacationActions';
+import { deleteVacationById, getUserVacationsById, getVacationById, updateVacationById } from '../models/Vacation/VacationActions';
 import { VacationModel } from '../models/Vacation/Vacation';
 import { UserModel } from '../models/User/User';
 export const getOneVacationById = async (req, res) => {
@@ -16,8 +16,14 @@ export const getOneVacationById = async (req, res) => {
     }
 };
 export const getAllVacations = async (req, res) => {
-    const { division } = req.query;
+    const { division, userId } = req.query;
     try {
+        if (userId) {
+            const userVacations = await getUserVacationsById(userId)
+                .sort({ createdAt: -1 })
+                .exec();
+            return res.status(200).json(userVacations);
+        }
         let aggregationPipeline = [];
         // aggregationPipeline.push({
         //     $match: {

@@ -88,6 +88,7 @@ export const deleteUser = async (req, res) => {
 export const updateUser = async (req, res) => {
     try {
         const { id } = req.params;
+        console.log(req.body);
         const user = await updateUserById(id, req.body);
         return res.status(200).json(user).end();
     }
