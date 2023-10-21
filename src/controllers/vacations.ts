@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import {
     deleteVacationById,
+    getUserVacationsById,
     getVacationById,
     getVacations,
     updateVacationById
@@ -34,12 +35,19 @@ export const getOneVacationById = async (req: Request, res: Response) => {
 };
 
 export const getAllVacations = async (
-    req: Request<{}, {}, {}, { division: string }>,
+    req: Request<{}, {}, {}, { division: string; userId: string }>,
     res: Response
 ) => {
-    const { division } = req.query;
+    const { division, userId } = req.query;
 
     try {
+        if (userId) {
+            const userVacations = await getUserVacationsById(userId)
+                .sort({ createdAt: -1 })
+                .exec();
+            return res.status(200).json(userVacations);
+        }
+
         let aggregationPipeline: any[] = [];
 
         // aggregationPipeline.push({

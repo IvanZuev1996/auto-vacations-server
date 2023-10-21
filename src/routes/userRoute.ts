@@ -12,7 +12,7 @@ import { isAuthenticated, isOwner } from '../middlewares';
 export default (router: express.Router) => {
     router.get('/users', getAllUsers);
     router.post('/users', createUser);
-    router.get('/users/:id', isAuthenticated, isOwner, getOneUserById);
+    router.get('/users/:id', getOneUserById);
     router.delete('/users/:id', isAuthenticated, isOwner, deleteUser);
     router.patch('/users/:id', updateUser);
 };
