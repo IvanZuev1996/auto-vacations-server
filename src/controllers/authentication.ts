@@ -126,7 +126,8 @@ export const register = async (req: Request<{}, {}, User>, res: Response) => {
             startWork,
             daysOnVacations: 0,
             prevBalance: balance,
-            balance: 28,
+            spentVacationDays: 0,
+            balance: 28 + balance,
             auth: {
                 username,
                 salt,

@@ -1,11 +1,10 @@
-import { Document } from 'mongoose';
-import { User } from './user';
+import { Document, ObjectId, Types } from 'mongoose';
 
 export type VacationStatus = 'pending' | 'rejected' | 'agreed';
 export type VacationTypes = 'standart';
 
 export interface Vacation extends Document {
-    user: User; // id пользователя
+    user: Types.ObjectId; // id пользователя
     start: Date; // дата начала отпуска
     end: Date; // дата конца отпуска
     type: VacationTypes; // тип отпуска

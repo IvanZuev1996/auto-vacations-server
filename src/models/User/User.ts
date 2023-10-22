@@ -15,6 +15,7 @@ export const UserSchema = new mongoose.Schema<User>(
         intersections: { type: [String], required: true }, // пересечения
         startWork: { type: Date }, // дата начала работы
         balance: { type: Number, required: true }, // баланс отпускных дней
+        spentVacationDays: { type: Number, required: true },
         prevBalance: { type: Number, required: true }, // баланс отпускных дней
         daysOnVacations: { type: Number }, // кол-во дней проведенных в отпуске
         visibleUsers: { type: [String] }, // доступные для просмотра пользователи

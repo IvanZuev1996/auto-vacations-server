@@ -26,6 +26,7 @@ export interface User extends Document {
     intersections?: string[]; // пересечения
     startWork?: Schema.Types.Date; // дата начала работы
     vacations: [Schema.Types.ObjectId]; // отпуска
+    spentVacationDays: number;
     prevBalance?: number;
     balance: number; // баланс отпускных дней
     daysOnVacations: number; // кол-во дней проведенных в отпуске
