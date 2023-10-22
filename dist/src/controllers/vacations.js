@@ -1,6 +1,8 @@
 import { deleteVacationById, getUserVacationsById, getVacationById, updateVacationById } from '../models/Vacation/VacationActions';
 import { VacationModel } from '../models/Vacation/Vacation';
 import { UserModel } from '../models/User/User';
+import { getUserById } from '../models/User/userActions';
+import { getVacaionDaysCount } from '../helpers/dates';
 export const getOneVacationById = async (req, res) => {
     const { id } = req.params;
     try {
@@ -117,7 +119,7 @@ export const getAllVacations = async (req, res) => {
     }
 };
 export const createVacation = async (req, res) => {
-    const { start, end } = req.body;
+    const { start, end, user } = req.body;
     const startDate = new Date(start);
     const endDate = new Date(end);
     const newVacation = new VacationModel({
@@ -126,8 +128,17 @@ export const createVacation = async (req, res) => {
         end: endDate,
         status: 'pending'
     });
+    const daysCount = getVacaionDaysCount(start, end);
+    const userDromDB = await getUserById(user.toString());
+    console.log(userDromDB);
     try {
         const savedVacation = await newVacation.save();
+        if (userDromDB?.balance) {
+            userDromDB.balance = userDromDB.balance - daysCount;
+            userDromDB.spentVacationDays =
+                userDromDB.spentVacationDays + daysCount;
+            await userDromDB.save();
+        }
         return res.status(200).json(savedVacation);
     }
     catch (error) {
@@ -142,6 +153,17 @@ export const deleteVacation = async (req, res) => {
     try {
         const { id } = req.params;
         const deletedVacation = await deleteVacationById(id);
+        if (deletedVacation) {
+            const daysCount = getVacaionDaysCount(deletedVacation.start, deletedVacation.end);
+            const userDromDB = await getUserById(deletedVacation.user.toString());
+            console.log(userDromDB);
+            if (userDromDB) {
+                userDromDB.balance = userDromDB.balance + daysCount;
+                userDromDB.spentVacationDays =
+                    userDromDB.spentVacationDays - daysCount;
+                await userDromDB.save();
+            }
+        }
         return res.json(deletedVacation);
     }
     catch (error) {

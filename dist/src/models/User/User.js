@@ -12,6 +12,7 @@ export const UserSchema = new mongoose.Schema({
     intersections: { type: [String], required: true },
     startWork: { type: Date },
     balance: { type: Number, required: true },
+    spentVacationDays: { type: Number, required: true },
     prevBalance: { type: Number, required: true },
     daysOnVacations: { type: Number },
     visibleUsers: { type: [String] },
