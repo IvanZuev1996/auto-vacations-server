@@ -24,6 +24,7 @@
         "@types/mongoose": "^5.11.97",
         "@types/node": "^20.8.0",
         "@types/node-cron": "^3.0.10",
+        "@types/nodemailer": "^6.4.13",
         "@typescript-eslint/eslint-plugin": "^6.7.4",
         "@typescript-eslint/parser": "^6.7.4",
         "cross-env": "^7.0.3",
@@ -50,6 +51,7 @@
         "lodash": "^4.17.21",
         "mongoose": "^7.5.3",
         "node-cron": "^3.0.2",
+        "nodemailer": "^6.9.7",
         "nodemon": "^2.0.19"
     },
     "pre-commit": [

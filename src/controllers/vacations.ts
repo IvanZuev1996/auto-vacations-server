@@ -12,6 +12,7 @@ import { UserModel } from '../models/User/User';
 import { getUserById } from '../models/User/userActions';
 import { getVacaionDaysCount } from '../helpers/dates';
 import { isUserInVacation } from '../helpers/vacation';
+import { sendAddedVacationEmail } from '../emailMessages/addedVacation';
 
 interface ReqQuery {
     month?: number;
@@ -189,6 +190,8 @@ export const createVacation = async (
 
             await userFromDB.save();
         }
+
+        sendAddedVacationEmail(savedVacation);
 
         return res.status(200).json(savedVacation);
     } catch (error) {

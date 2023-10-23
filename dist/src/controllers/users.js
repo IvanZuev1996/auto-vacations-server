@@ -26,8 +26,11 @@ export const getAllUsers = async (req, res) => {
             ]
         }));
         let query = {};
-        if (sort !== 'all' && sort) {
-            query.vacationStatus = sort;
+        if (sort === 'on vacation') {
+            query.nowInVacation = true;
+        }
+        else if (sort === 'working') {
+            query.nowInVacation = false;
         }
         if (searchQueries) {
             query.$and = searchQueries;

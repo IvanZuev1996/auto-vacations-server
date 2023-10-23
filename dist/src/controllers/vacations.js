@@ -4,6 +4,7 @@ import { UserModel } from '../models/User/User';
 import { getUserById } from '../models/User/userActions';
 import { getVacaionDaysCount } from '../helpers/dates';
 import { isUserInVacation } from '../helpers/vacation';
+import { sendAddedVacationEmail } from '../emailMessages/addedVacation';
 export const getOneVacationById = async (req, res) => {
     const { id } = req.params;
     try {
@@ -141,6 +142,7 @@ export const createVacation = async (req, res) => {
             }
             await userFromDB.save();
         }
+        sendAddedVacationEmail(savedVacation);
         return res.status(200).json(savedVacation);
     }
     catch (error) {
