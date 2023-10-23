@@ -1,7 +1,7 @@
 import { UserModel } from './User';
 export const getUsers = () => UserModel.find();
 export const getUserByEmail = (email) => UserModel.findOne({ email });
-export const getUsersByDivision = (divisionId) => UserModel.find({ 'division._id': divisionId });
+export const getUsersByDivision = (divisionId) => UserModel.find({ division: divisionId });
 export const getUserByUsername = (username) => UserModel.findOne({ 'auth.username': username });
 export const getUserByFullName = (firstname, lastname, division, patronymic) => UserModel.findOne({ firstname, lastname, division, patronymic });
 export const getUserBySessionToken = (sessionToken) => UserModel.findOne({ 'auth.sessionToken': sessionToken });

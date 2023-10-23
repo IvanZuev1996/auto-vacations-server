@@ -3,6 +3,7 @@ import { VacationModel } from '../models/Vacation/Vacation';
 import { UserModel } from '../models/User/User';
 import { getUserById } from '../models/User/userActions';
 import { getVacaionDaysCount } from '../helpers/dates';
+import { isUserInVacation } from '../helpers/vacation';
 export const getOneVacationById = async (req, res) => {
     const { id } = req.params;
     try {
@@ -129,15 +130,16 @@ export const createVacation = async (req, res) => {
         status: 'pending'
     });
     const daysCount = getVacaionDaysCount(start, end);
-    const userDromDB = await getUserById(user.toString());
-    console.log(userDromDB);
+    const userFromDB = await getUserById(user.toString());
     try {
         const savedVacation = await newVacation.save();
-        if (userDromDB?.balance) {
-            userDromDB.balance = userDromDB.balance - daysCount;
-            userDromDB.spentVacationDays =
-                userDromDB.spentVacationDays + daysCount;
-            await userDromDB.save();
+        if (userFromDB) {
+            if (userFromDB?.balance) {
+                userFromDB.balance = userFromDB.balance - daysCount;
+                userFromDB.spentVacationDays =
+                    userFromDB.spentVacationDays + daysCount;
+            }
+            await userFromDB.save();
         }
         return res.status(200).json(savedVacation);
     }
@@ -155,13 +157,15 @@ export const deleteVacation = async (req, res) => {
         const deletedVacation = await deleteVacationById(id);
         if (deletedVacation) {
             const daysCount = getVacaionDaysCount(deletedVacation.start, deletedVacation.end);
-            const userDromDB = await getUserById(deletedVacation.user.toString());
-            console.log(userDromDB);
-            if (userDromDB) {
-                userDromDB.balance = userDromDB.balance + daysCount;
-                userDromDB.spentVacationDays =
-                    userDromDB.spentVacationDays - daysCount;
-                await userDromDB.save();
+            const userFromDB = await getUserById(deletedVacation.user.toString());
+            if (userFromDB) {
+                userFromDB.balance = userFromDB.balance + daysCount;
+                userFromDB.spentVacationDays =
+                    userFromDB.spentVacationDays - daysCount;
+                if (isUserInVacation(deletedVacation)) {
+                    userFromDB.nowInVacation = false;
+                }
+                await userFromDB.save();
             }
         }
         return res.json(deletedVacation);
@@ -178,6 +182,17 @@ export const updateVacation = async (req, res) => {
     try {
         const { id } = req.params;
         const vacation = await updateVacationById(id, req.body);
+        if (vacation) {
+            const userFromDB = await getUserById(vacation.user.toString());
+            if (userFromDB) {
+                if (vacation?.status === 'agreed') {
+                    if (isUserInVacation(vacation)) {
+                        userFromDB.nowInVacation = true;
+                        await userFromDB.save();
+                    }
+                }
+            }
+        }
         return res.status(200).json(vacation).end();
     }
     catch (error) {

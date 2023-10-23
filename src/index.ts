@@ -8,6 +8,8 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import router from './routes/index';
 
+import './jobs/checkUsersStatus';
+
 dotenv.config();
 
 const app: Express = express();

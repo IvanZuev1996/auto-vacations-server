@@ -7,7 +7,7 @@ export const getUsers = () => UserModel.find();
 export const getUserByEmail = (email: string) => UserModel.findOne({ email });
 
 export const getUsersByDivision = (divisionId: string) =>
-    UserModel.find({ 'division._id': divisionId });
+    UserModel.find({ division: divisionId });
 
 export const getUserByUsername = (username: string) =>
     UserModel.findOne({ 'auth.username': username });

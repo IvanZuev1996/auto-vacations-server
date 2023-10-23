@@ -82,6 +82,7 @@ export const register = async (req, res) => {
             prevBalance: balance,
             spentVacationDays: 0,
             balance: 28 + balance,
+            nowInVacation: false,
             auth: {
                 username,
                 salt,

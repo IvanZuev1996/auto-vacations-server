@@ -19,7 +19,7 @@ export const UserSchema = new mongoose.Schema<User>(
         prevBalance: { type: Number, required: true }, // баланс отпускных дней
         daysOnVacations: { type: Number }, // кол-во дней проведенных в отпуске
         visibleUsers: { type: [String] }, // доступные для просмотра пользователи
-        vacationStatus: { type: String }, // статус 'в отпуске' или 'работает'
+        nowInVacation: { type: Boolean }, // статус 'в отпуске' или 'работает'
         auth: {
             username: { type: String, required: true },
             password: { type: String, required: true, select: false },
