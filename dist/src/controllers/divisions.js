@@ -23,7 +23,7 @@ export const getDivisionStatistics = async (req, res) => {
         let inVacationUsersCount = 0;
         console.log(divisionUsers);
         for (const user of divisionUsers) {
-            const userVacations = await getUserVacationsById(user.id);
+            const userVacations = await getUserVacationsById(user._id);
             for (const vacation of userVacations) {
                 const startDate = dayjs(vacation.start);
                 const endDate = dayjs(vacation.end).add(1, 'day');

@@ -16,6 +16,7 @@ export const UserSchema = new mongoose.Schema({
     prevBalance: { type: Number, required: true },
     daysOnVacations: { type: Number },
     visibleUsers: { type: [String] },
+    vacationsDuration: { type: [Number] },
     nowInVacation: { type: Boolean },
     auth: {
         username: { type: String, required: true },

@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { vacationTypeMap } from '../types/vacation';
 import { getUserById } from '../models/User/userActions';
 import dayjs from 'dayjs';
 import { formatStartDate } from '../helpers/dates';
@@ -20,7 +21,7 @@ export const sendAddedVacationEmail = async (vacation) => {
             <h2>${userData?.firstname} ${userData?.patronymic} подал заявку на отпуск!</h2>
             <h3>Детали заявки:</h3>
             <div>
-                <p>Тип заявки: ${vacation.type}</p>
+                <p>Тип заявки: ${vacationTypeMap[vacation.type]}</p>
                 <p>Дата начала отпуска: ${start} </p>
                 <p>Дата конца отпуска: ${end} </p>
             </div>

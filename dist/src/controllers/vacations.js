@@ -140,6 +140,12 @@ export const createVacation = async (req, res) => {
                 userFromDB.spentVacationDays =
                     userFromDB.spentVacationDays + daysCount;
             }
+            if (userFromDB.vacationsDuration) {
+                userFromDB.vacationsDuration?.push(daysCount);
+            }
+            else {
+                userFromDB.vacationsDuration = [daysCount];
+            }
             await userFromDB.save();
         }
         sendAddedVacationEmail(savedVacation);
@@ -167,6 +173,10 @@ export const deleteVacation = async (req, res) => {
                 if (isUserInVacation(deletedVacation)) {
                     userFromDB.nowInVacation = false;
                 }
+                const index = userFromDB.vacationsDuration?.findIndex((item) => item === daysCount);
+                if (index !== undefined) {
+                    userFromDB.vacationsDuration?.splice(index, 1);
+                }
                 await userFromDB.save();
             }
         }
@@ -183,16 +193,33 @@ export const deleteVacation = async (req, res) => {
 export const updateVacation = async (req, res) => {
     try {
         const { id } = req.params;
+        const oldVacation = await getVacationById(id);
         const vacation = await updateVacationById(id, req.body);
         if (vacation) {
             const userFromDB = await getUserById(vacation.user.toString());
             if (userFromDB) {
+                if (oldVacation) {
+                    const oldDaysCount = getVacaionDaysCount(oldVacation.start, oldVacation.end);
+                    const newDaysCount = getVacaionDaysCount(vacation.start, vacation.end);
+                    const index = userFromDB?.vacationsDuration?.findIndex((item) => item === oldDaysCount);
+                    if (index && userFromDB.vacationsDuration) {
+                        userFromDB.vacationsDuration[index] = newDaysCount;
+                    }
+                    if (oldDaysCount < newDaysCount) {
+                        userFromDB.balance =
+                            userFromDB.balance - newDaysCount - oldDaysCount;
+                    }
+                    if (oldDaysCount > newDaysCount) {
+                        userFromDB.balance =
+                            userFromDB.balance + oldDaysCount - newDaysCount;
+                    }
+                }
                 if (vacation?.status === 'agreed') {
                     if (isUserInVacation(vacation)) {
                         userFromDB.nowInVacation = true;
-                        await userFromDB.save();
                     }
                 }
+                await userFromDB.save();
             }
         }
         return res.status(200).json(vacation).end();

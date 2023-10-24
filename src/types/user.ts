@@ -29,6 +29,8 @@ export interface User extends Document {
     spentVacationDays: number;
     prevBalance?: number;
     balance: number; // баланс отпускных дней
+    vacationsDuration?: [number];
+    applicationWriteOn: string;
     daysOnVacations: number; // кол-во дней проведенных в отпуске
     visibleUsers: string[]; // доступные для просмотра пользователи
     nowInVacation: boolean; // статус 'в отпуске' или 'работает'

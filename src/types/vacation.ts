@@ -1,7 +1,12 @@
 import { Document, ObjectId, Types } from 'mongoose';
 
 export type VacationStatus = 'pending' | 'rejected' | 'agreed';
-export type VacationTypes = 'standart';
+export type VacationTypes = 'standart' | 'donor';
+
+export const vacationTypeMap: Record<VacationTypes, string> = {
+    donor: 'Донорский',
+    standart: 'Ежегодный оплачиваемый'
+};
 
 export interface Vacation extends Document {
     user: Types.ObjectId; // id пользователя
