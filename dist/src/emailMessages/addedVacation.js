@@ -12,6 +12,8 @@ const transporter = nodemailer.createTransport({
 });
 export const sendAddedVacationEmail = async (vacation) => {
     const userData = await getUserById(vacation.user.toString());
+    const directorData = await getUserById('653913dc8eb82ed58ad00a9d');
+    console.log(directorData);
     const startDate = dayjs(vacation.start, 'YYYY-MM-DD');
     const endDate = dayjs(vacation.end, 'YYYY-MM-DD');
     const start = formatStartDate(startDate.toString());
@@ -26,13 +28,13 @@ export const sendAddedVacationEmail = async (vacation) => {
                 <p>Дата конца отпуска: ${end} </p>
             </div>
             <div style="background-color: #0070ff; cursor: pointer; width: fit-content; padding: 10;  border-radius: 6px;">
-                <a href="https://vacation-plus.netlify.app/vacations" style="text-decoration: none; color: white;">Перейти в сервис</a>
+                <a href="https://vacation-plus.netlify.app/vacations/${vacation._id}" style="text-decoration: none; color: white;">Перейти в сервис</a>
             </div>
         </div>
     `;
     const mailOptions = {
         from: 'vacationplusapp@gmail.com',
-        to: 'ivan-zuev-97@mail.ru',
+        to: directorData?.email ? directorData?.email : 'ivan-zuev-97@mail.ru',
         subject: 'Информация о заявках',
         text: 'Добавлена новая заявка!',
         html: htmlContent
